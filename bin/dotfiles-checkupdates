@@ -1,0 +1,32 @@
+#!/bin/bash
+
+ALT="idle"
+
+TOOLTIP=$"<b>"$(omarchy-update-available 2>/dev/null)$"</b>"$'\n\n'
+if [[ "$TOOLTIP" == *available* ]]; then
+    ALT="available"
+fi
+
+UPDATES=$(checkupdates 2>/dev/null)
+if [[ -n "$UPDATES" ]]; then
+    TOOLTIP+="<b>Official packages updates available:</b>"$'\n'
+    TOOLTIP+="$UPDATES"$'\n\n'
+    ALT="available"
+else
+    TOOLTIP+="<b>Official packages are up to date</b>"$'\n\n'
+fi
+
+AUR_UPDATES=$(aur-chack-updates 2>/dev/null | sed -e '/^::/d' -e '/no updates/d')
+if [[ -n "$AUR_UPDATES" ]]; then
+    TOOLTIP+="<b>AUR packages updates available:</b>"$'\n'
+    TOOLTIP+="$AUR_UPDATES"
+    ALT="available"
+else
+    TOOLTIP+="<b>AUR packages are up to date</b>"
+fi
+
+jq -cn \
+    --arg text "" \
+    --arg alt "$ALT" \
+    --arg tooltip "$TOOLTIP" \
+    '{text: $text, alt: $alt, tooltip: $tooltip}'

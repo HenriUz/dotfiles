@@ -76,10 +76,15 @@
     "return-type": "json"
   },
   "custom/update": {
-    "format": "",
-    "exec": "omarchy-update-available",
+    "return-type": "json",
+    "exec": "dotfiles-checkupdates",
+    "format": "{icon}",
+    "format-icons": {
+      "idle": "",
+      "available": "⇪"
+    },
     "on-click": "omarchy-launch-floating-terminal-with-presentation omarchy-update",
-    "tooltip-format": "Omarchy update available",
+    "tooltip": true,
     "signal": 7,
     "interval": 3600
   },
