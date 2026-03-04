@@ -16,14 +16,14 @@ else
     TOOLTIP+="<b>Official packages are up to date</b>"$'\n\n'
 fi
 
-AUR_UPDATES=$(aur-check-updates 2>/dev/null | sed -e '/^::/d' -e '/no updates/d')
-if [[ -n "$AUR_UPDATES" ]]; then
-    TOOLTIP+="<b>AUR packages updates available:</b>"$'\n'
-    TOOLTIP+="$AUR_UPDATES"
-    ALT="available"
-else
-    TOOLTIP+="<b>AUR packages are up to date</b>"
-fi
+# AUR_UPDATES=$(aur-check-updates 2>/dev/null | sed -e '/^::/d' -e '/no updates/d')
+# if [[ -n "$AUR_UPDATES" ]]; then
+#     TOOLTIP+="<b>AUR packages updates available:</b>"$'\n'
+#     TOOLTIP+="$AUR_UPDATES"
+#     ALT="available"
+# else
+#     TOOLTIP+="<b>AUR packages are up to date</b>"
+# fi
 
 jq -cn \
     --arg text "" \
