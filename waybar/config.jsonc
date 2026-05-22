@@ -4,8 +4,8 @@
   "position": "top",
   "spacing": 0,
   "height": 26,
-  "modules-left": ["custom/omarchy", "hyprland/workspaces"],
-  "modules-center": ["clock", "custom/screenrecording-indicator", "custom/update"],
+  "modules-left": ["custom/omarchy", "hyprland/workspaces", "custom/update"],
+  "modules-center": ["clock", "custom/weather", "custom/screenrecording-indicator", "custom/idle-indicator", "custom/notification-silencing-indicator"],
   "modules-right": [
     "group/tray-expander",
     "network",
@@ -50,7 +50,20 @@
       "5": []
     }
   },
-
+  "custom/update": {
+    "return-type": "json",
+    "exec": "~/Developer/dotfiles/bin/dotfiles-checkupdates",
+    "format": "{icon}",
+    "format-icons": {
+      "idle": "",
+      "available": "⇪"
+    },
+    "on-click": "omarchy-launch-floating-terminal-with-presentation omarchy-update",
+    "tooltip": true,
+    "signal": 7,
+    "interval": 3600
+  },
+  
   /* --- Center Modules. --- */
   "clock": {
     "format": "{:L%A %H:%M}",
@@ -69,24 +82,18 @@
     },
     "on-click-right": "omarchy-launch-floating-terminal-with-presentation omarchy-tz-select"
   },
+  "custom/weather": {
+    "exec": "$OMARCHY_PATH/default/waybar/weather.sh",
+    "return-type": "json",
+    "interval": 60,
+    "tooltip": false,
+    "on-click": "notify-send -u low \"$(omarchy-weather-status)\""
+  },
   "custom/screenrecording-indicator": {
-    "on-click": "omarchy-cmd-screenrecord",
+    "on-click": "omarchy-capture-screenrecording",
     "exec": "$OMARCHY_PATH/default/waybar/indicators/screen-recording.sh",
     "signal": 8,
     "return-type": "json"
-  },
-  "custom/update": {
-    "return-type": "json",
-    "exec": "dotfiles-checkupdates",
-    "format": "{icon}",
-    "format-icons": {
-      "idle": "",
-      "available": "⇪"
-    },
-    "on-click": "omarchy-launch-floating-terminal-with-presentation omarchy-update",
-    "tooltip": true,
-    "signal": 7,
-    "interval": 3600
   },
 
   /* --- Right Modules. --- */
@@ -102,6 +109,31 @@
     "format": "",
     "tooltip": false
   },
+  "custom/voxtype": {
+    "exec": "~/.local/share/omarchy/bin/omarchy-voxtype-status",
+    "return-type": "json",
+    "format": "{icon}",
+    "format-icons": {
+      "idle": "",
+      "recording": "󰍬",
+      "transcribing": "󰔟"
+    },
+    "tooltip": true,
+    "on-click-right": "omarchy-voxtype-config",
+    "on-click": "omarchy-voxtype-model"
+  },
+  "custom/idle-indicator": {
+    "on-click": "omarchy-toggle-idle",
+    "exec": "$OMARCHY_PATH/default/waybar/indicators/idle.sh",
+    "signal": 9,
+    "return-type": "json"
+  },
+  "custom/notification-silencing-indicator": {
+    "on-click": "omarchy-toggle-notification-silencing",
+    "exec": "$OMARCHY_PATH/default/waybar/indicators/notification-silencing.sh",
+    "signal": 10,
+    "return-type": "json"
+  },
   "tray": {
     "icon-size": 12,
     "spacing": 17
@@ -113,7 +145,7 @@
     "format-ethernet": "󰀂",
     "format-disconnected": "󰤮",
     "tooltip-format-wifi": "{essid} ({frequency} GHz) - {signalStrength}%\n⇣{bandwidthDownBytes}  ⇡{bandwidthUpBytes}",
-    "tooltip-format-ethernet": "⇣{bandwidthDownBytes}  ⇡{bandwidthUpBytes}",
+    "tooltip-format-ethernet": "Connected",
     "tooltip-format-disconnected": "Disconnected",
     "interval": 3,
     "spacing": 1,
@@ -129,12 +161,14 @@
   },
   "pulseaudio": {
     "format": "{icon}",
-    "on-click": "omarchy-launch-or-focus-tui wiremix",
+    "on-click": "omarchy-launch-audio",
     "on-click-right": "pamixer -t",
     "tooltip-format": "Playing at {volume}%",
     "scroll-step": 5,
     "format-muted": "",
     "format-icons": {
+      "headphone": "",
+      "headset": "",
       "default": ["", "", ""]
     }
   },
@@ -174,6 +208,7 @@
     "tooltip-format-charging": "{power:>1.0f}W↑ {capacity}%",
     "interval": 5,
     "on-click": "omarchy-menu power",
+    "on-click-right": "notify-send -u low \"$(omarchy-battery-status)\"",
     "states": {
       "warning": 20,
       "critical": 10
